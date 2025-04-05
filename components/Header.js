@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { FiShoppingBag, FiMenu, FiX } from 'react-icons/fi';
+import { FiMenu, FiX } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
+import CartIcon from './CartIcon';
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -43,9 +44,7 @@ export default function Header() {
         </nav>
 
         <div className="flex items-center space-x-4">
-          <Link href="/panier" className={`${isScrolled ? 'text-primary-700' : 'text-white'}`}>
-            <FiShoppingBag size={22} />
-          </Link>
+          <CartIcon className={isScrolled ? 'text-primary-700' : 'text-white'} />
           
           <button 
             className={`md:hidden ${isScrolled ? 'text-primary-700' : 'text-white'}`}
