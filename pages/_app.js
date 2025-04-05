@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { Cormorant_Garamond, Poppins } from 'next/font/google';
 import Head from 'next/head';
 import '../styles/globals.css';
+import { CartProvider } from '../context/CartContext';
 
 // Définition des polices
 const cormorant = Cormorant_Garamond({
@@ -45,7 +46,7 @@ export default function App({ Component, pageProps }) {
   }, []);
   
   return (
-    <>
+    <CartProvider>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="theme-color" content="#967c58" />
@@ -55,6 +56,6 @@ export default function App({ Component, pageProps }) {
       <div className={`${cormorant.variable} ${poppins.variable}`}>
         <Component {...pageProps} />
       </div>
-    </>
+    </CartProvider>
   );
 }
