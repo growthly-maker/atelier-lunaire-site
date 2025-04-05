@@ -5,7 +5,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
-import { FiArrowLeft, FiShoppingBag, FiHeart } from 'react-icons/fi';
+import { FiArrowLeft, FiShoppingBag, FiHeart, FiCheck } from 'react-icons/fi';
+import { useCart } from '../../context/CartContext';
 
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
@@ -131,10 +132,13 @@ const getRelatedProducts = (relatedIds) => {
 export default function ProductDetail() {
   const router = useRouter();
   const { id } = router.query;
+  const { addToCart } = useCart();
   
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedOption, setSelectedOption] = useState({});
   const [quantity, setQuantity] = useState(1);
+  const [addedToCart, setAddedToCart] = useState(false);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
   
   // Si la page est en cours de chargement ou si l'ID n'est pas disponible
   if (router.isFallback || !id) {
@@ -184,6 +188,23 @@ export default function ProductDetail() {
     }
     
     return finalPrice * quantity;
+  };
+
+  // Ajouter au panier
+  const handleAddToCart = () => {
+    setIsAddingToCart(true);
+    
+    // Ajoute un délai artificiel pour l'animation
+    setTimeout(() => {
+      addToCart(product, quantity, selectedOption);
+      setAddedToCart(true);
+      
+      // Réinitialise l'indicateur après quelques secondes
+      setTimeout(() => {
+        setAddedToCart(false);
+        setIsAddingToCart(false);
+      }, 2000);
+    }, 500);
   };
 
   return (
@@ -258,7 +279,7 @@ export default function ProductDetail() {
                 animate={{ opacity: 1, transition: { delay: 0.1 } }}
                 className="text-2xl text-primary-600 font-medium mb-4"
               >
-                {calculatePrice()} €
+                {calculatePrice().toFixed(2)} €
               </motion.p>
               
               <motion.div
@@ -323,9 +344,22 @@ export default function ProductDetail() {
                 
                 {/* Boutons d'action */}
                 <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                  <button className="flex-1 px-6 py-3 bg-primary-600 text-white hover:bg-primary-700 transition-colors flex items-center justify-center">
-                    <FiShoppingBag className="mr-2" />
-                    Ajouter au panier
+                  <button 
+                    onClick={handleAddToCart}
+                    disabled={isAddingToCart}
+                    className={`flex-1 px-6 py-3 ${addedToCart ? 'bg-green-600' : 'bg-primary-600 hover:bg-primary-700'} text-white transition-colors flex items-center justify-center`}
+                  >
+                    {addedToCart ? (
+                      <>
+                        <FiCheck className="mr-2" />
+                        Ajouté au panier
+                      </>
+                    ) : (
+                      <>
+                        <FiShoppingBag className="mr-2" />
+                        {isAddingToCart ? 'Ajout en cours...' : 'Ajouter au panier'}
+                      </>
+                    )}
                   </button>
                   <button className="px-4 py-3 border border-primary-600 text-primary-600 hover:bg-primary-50 transition-colors flex items-center justify-center">
                     <FiHeart className="mr-2" />
