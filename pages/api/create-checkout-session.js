@@ -1,6 +1,10 @@
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+// Initialiser Stripe avec votre clé secrète
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: '2023-10-16', // Utilisez la version la plus récente
+  maxNetworkRetries: 3, // Augmente la fiabilité pour les problèmes de réseau
+});
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -12,6 +16,21 @@ export default async function handler(req, res) {
 
     if (!items || items.length === 0) {
       return res.status(400).json({ error: 'Le panier est vide' });
+    }
+
+    // Vérifiez que les items ont le format correct
+    const validItems = items.every(item => {
+      return (
+        item.price_data &&
+        item.price_data.currency &&
+        item.price_data.product_data &&
+        typeof item.price_data.unit_amount === 'number' &&
+        typeof item.quantity === 'number'
+      );
+    });
+
+    if (!validItems) {
+      return res.status(400).json({ error: 'Format d\'item invalide' });
     }
 
     // Crée une session de paiement Stripe
@@ -70,12 +89,22 @@ export default async function handler(req, res) {
       allow_promotion_codes: true,
       metadata: {
         origin: 'atelier-lunaire-ecommerce'
-      }
+      },
+      // Pour avoir plus d'informations sur le client
+      billing_address_collection: 'required',
+      phone_number_collection: {
+        enabled: true,
+      },
+      customer_email: req.body.email || undefined, // Pré-remplir l'email si disponible
     });
 
     res.status(200).json({ id: session.id });
   } catch (error) {
     console.error('Erreur Stripe:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ 
+      error: 'Une erreur est survenue lors de la création de la session de paiement',
+      details: error.message,
+      code: error.code || 'unknown_error'
+    });
   }
 }
