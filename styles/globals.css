@@ -1,0 +1,134 @@
+/* styles/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground: #433729;
+  --background: #f8f7f4;
+  --primary: #967c58;
+  --primary-dark: #65523c;
+  --accent: #8c7964;
+  --beige-light: #f5f3ef;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-poppins), sans-serif;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-cormorant), serif;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+}
+
+/* Animation de fondu pour les images */
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* Style pour les boutons principaux */
+.btn-primary {
+  @apply px-6 py-3 bg-primary-600 text-white hover:bg-primary-700 transition-colors;
+}
+
+.btn-outline {
+  @apply px-6 py-3 border border-primary-600 text-primary-600 hover:bg-primary-50 transition-colors;
+}
+
+/* Transitions et hover effects */
+.hover-scale {
+  @apply transition-transform duration-300;
+}
+
+.hover-scale:hover {
+  @apply transform scale-105;
+}
+
+/* Personnalisation de la barre de défilement */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* Classes utilitaires personnalisées */
+.container-custom {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.heading-primary {
+  @apply text-3xl md:text-4xl lg:text-5xl font-serif text-primary-700;
+}
+
+.heading-secondary {
+  @apply text-2xl md:text-3xl font-serif text-primary-700;
+}
+
+.text-content {
+  @apply text-gray-700 leading-relaxed;
+}
+
+/* Adaptation responsive */
+@media (max-width: 640px) {
+  .heading-primary {
+    @apply text-2xl;
+  }
+  
+  .heading-secondary {
+    @apply text-xl;
+  }
+}
+
+/* Animation de chargement */
+.loader {
+  border: 3px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 3px solid var(--primary);
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
