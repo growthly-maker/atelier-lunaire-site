@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
-import { FiCheck, FiArrowRight } from 'react-icons/fi';
+import { FiCheck, FiArrowRight, FiLoader, FiMapPin, FiCalendar, FiCreditCard } from 'react-icons/fi';
 import { useCart } from '../../context/CartContext';
 
 import Header from '../../components/Header';
@@ -13,13 +13,49 @@ export default function OrderSuccess() {
   const router = useRouter();
   const { clearCart } = useCart();
   const { session_id } = router.query;
+  const [orderDetails, setOrderDetails] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  // Vide le panier une fois que la commande est terminée
+  // Récupérer les détails de la commande
   useEffect(() => {
     if (session_id) {
+      // Vide le panier une fois que la session est confirmée
       clearCart();
+      
+      // Récupère les détails de commande de l'API
+      const fetchOrderDetails = async () => {
+        try {
+          const response = await fetch(`/api/check-session?session_id=${session_id}`);
+          
+          if (!response.ok) {
+            throw new Error('Erreur lors de la récupération des détails de commande');
+          }
+          
+          const data = await response.json();
+          setOrderDetails(data);
+        } catch (err) {
+          console.error('Erreur:', err);
+          setError('Impossible de récupérer les détails de votre commande');
+        } finally {
+          setLoading(false);
+        }
+      };
+      
+      fetchOrderDetails();
+    } else if (router.isReady && !session_id) {
+      // Si la page est chargée mais qu'il n'y a pas de session_id, redirige
+      setLoading(false);
+      setError('Aucun identifiant de commande trouvé');
     }
-  }, [session_id, clearCart]);
+  }, [session_id, clearCart, router.isReady]);
+
+  // Format d'affichage de la date
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString('fr-FR', options);
+  };
 
   // Animations
   const containerVariants = {
@@ -36,6 +72,39 @@ export default function OrderSuccess() {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 }
   };
+
+  // Contenu à afficher pendant le chargement
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-beige-100">
+        <Header />
+        <div className="pt-32 pb-20 px-4 flex items-center justify-center">
+          <div className="flex items-center text-primary-600">
+            <FiLoader className="animate-spin mr-2" size={20} />
+            <span>Chargement des détails de votre commande...</span>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Contenu à afficher en cas d'erreur
+  if (error) {
+    return (
+      <div className="min-h-screen bg-beige-100">
+        <Header />
+        <div className="pt-32 pb-20 px-4 max-w-3xl mx-auto text-center">
+          <h1 className="text-3xl md:text-4xl font-serif text-primary-700 mb-6">Un problème est survenu</h1>
+          <p className="text-gray-700 mb-8">{error}</p>
+          <Link href="/boutique" className="inline-block px-6 py-3 bg-primary-600 text-white hover:bg-primary-700 transition-colors">
+            Retour à la boutique
+          </Link>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-beige-100">
@@ -78,13 +147,76 @@ export default function OrderSuccess() {
               Votre commande a été confirmée et sera préparée avec soin par nos artisans.
             </motion.p>
 
-            {session_id && (
+            {orderDetails && (
               <motion.div 
                 variants={itemVariants}
-                className="mb-8 p-4 bg-beige-200 text-primary-700 rounded-sm"
+                className="mb-8 p-4 bg-beige-200 text-primary-700 text-left rounded-sm"
               >
-                <p className="font-medium">Référence de commande</p>
-                <p className="text-sm">{session_id}</p>
+                <div className="border-b border-primary-200 pb-3 mb-3">
+                  <p className="font-medium">Référence de commande</p>
+                  <p className="text-sm">{orderDetails.orderId}</p>
+                </div>
+
+                {orderDetails.customer && (
+                  <div className="border-b border-primary-200 pb-3 mb-3">
+                    <p className="font-medium">Client</p>
+                    <p className="text-sm">{orderDetails.customer.name}</p>
+                    <p className="text-sm">{orderDetails.customer.email}</p>
+                  </div>
+                )}
+
+                {orderDetails.shipping && orderDetails.shipping.address && (
+                  <div className="border-b border-primary-200 pb-3 mb-3 flex items-start">
+                    <FiMapPin className="mt-1 mr-2 flex-shrink-0" />
+                    <div>
+                      <p className="font-medium">Adresse de livraison</p>
+                      <p className="text-sm">{orderDetails.shipping.address.line1}</p>
+                      {orderDetails.shipping.address.line2 && (
+                        <p className="text-sm">{orderDetails.shipping.address.line2}</p>
+                      )}
+                      <p className="text-sm">
+                        {orderDetails.shipping.address.postal_code} {orderDetails.shipping.address.city}
+                      </p>
+                      <p className="text-sm">{orderDetails.shipping.address.country}</p>
+                    </div>
+                  </div>
+                )}
+
+                <div className="border-b border-primary-200 pb-3 mb-3 flex items-start">
+                  <FiCalendar className="mt-1 mr-2 flex-shrink-0" />
+                  <div>
+                    <p className="font-medium">Date de commande</p>
+                    <p className="text-sm">{formatDate(orderDetails.payment?.created)}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start">
+                  <FiCreditCard className="mt-1 mr-2 flex-shrink-0" />
+                  <div>
+                    <p className="font-medium">Total payé</p>
+                    <p className="text-lg font-medium">{orderDetails.payment?.amount.toFixed(2)} €</p>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Détails des articles commandés */}
+            {orderDetails && orderDetails.items && orderDetails.items.length > 0 && (
+              <motion.div variants={itemVariants} className="mb-8 text-left">
+                <h2 className="text-xl font-serif text-primary-700 mb-4">Articles commandés</h2>
+                <div className="divide-y divide-gray-200">
+                  {orderDetails.items.map((item, index) => (
+                    <div key={index} className="py-4 flex justify-between">
+                      <div>
+                        <p className="font-medium">{item.description}</p>
+                        <p className="text-sm text-gray-600">Quantité: {item.quantity}</p>
+                      </div>
+                      <p className="font-medium">
+                        {(item.amount_total / 100).toFixed(2)} €
+                      </p>
+                    </div>
+                  ))}
+                </div>
               </motion.div>
             )}
 
