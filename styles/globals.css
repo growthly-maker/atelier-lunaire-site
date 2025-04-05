@@ -4,12 +4,12 @@
 @tailwind utilities;
 
 :root {
-  --foreground: #433729;
-  --background: #f8f7f4;
-  --primary: #967c58;
-  --primary-dark: #65523c;
-  --accent: #8c7964;
-  --beige-light: #f5f3ef;
+  --foreground: #171717;
+  --background: #fafafa;
+  --primary: #0ea5e9;
+  --primary-dark: #0369a1;
+  --secondary: #d946ef;
+  --neutral-light: #f5f5f5;
 }
 
 * {
@@ -25,12 +25,19 @@ html {
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: var(--font-poppins), sans-serif;
+  font-family: var(--font-outfit), sans-serif;
   line-height: 1.6;
+  overflow-x: hidden;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-cormorant), serif;
+h1, h2, h3, h4 {
+  font-family: var(--font-playfair), serif;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+h5, h6 {
+  font-family: var(--font-sora), sans-serif;
   font-weight: 500;
   line-height: 1.2;
 }
@@ -38,6 +45,11 @@ h1, h2, h3, h4, h5, h6 {
 a {
   color: inherit;
   text-decoration: none;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+a:hover {
+  color: var(--primary);
 }
 
 button, input, select, textarea {
@@ -46,7 +58,7 @@ button, input, select, textarea {
 
 /* Animation de fondu pour les images */
 .fade-in {
-  animation: fadeIn 0.5s ease-in;
+  animation: fadeIn 0.8s ease-in;
 }
 
 @keyframes fadeIn {
@@ -56,11 +68,15 @@ button, input, select, textarea {
 
 /* Style pour les boutons principaux */
 .btn-primary {
-  @apply px-6 py-3 bg-primary-600 text-white hover:bg-primary-700 transition-colors;
+  @apply px-6 py-3 bg-primary-500 text-white hover:bg-primary-600 rounded-lg transition-all duration-300 transform hover:translate-y-[-2px] hover:shadow-glow;
 }
 
-.btn-outline {
-  @apply px-6 py-3 border border-primary-600 text-primary-600 hover:bg-primary-50 transition-colors;
+.btn-secondary {
+  @apply px-6 py-3 border border-primary-500 text-primary-500 hover:bg-primary-50 rounded-lg transition-all duration-300 transform hover:translate-y-[-2px];
+}
+
+.btn-accent {
+  @apply px-6 py-3 bg-secondary-500 text-white hover:bg-secondary-600 rounded-lg transition-all duration-300 transform hover:translate-y-[-2px] hover:shadow-glow;
 }
 
 /* Transitions et hover effects */
@@ -72,22 +88,31 @@ button, input, select, textarea {
   @apply transform scale-105;
 }
 
+/* Glassmorphism effect */
+.glass {
+  @apply bg-white/80 backdrop-blur-lg rounded-xl border border-white/30;
+}
+
+.glass-dark {
+  @apply bg-neutral-900/80 backdrop-blur-lg text-white rounded-xl border border-neutral-800/50;
+}
+
 /* Personnalisation de la barre de défilement */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--background);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--accent);
-  border-radius: 5px;
+  background: var(--primary);
+  border-radius: 100px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--primary);
+  background: var(--primary-dark);
 }
 
 /* Classes utilitaires personnalisées */
@@ -96,15 +121,15 @@ button, input, select, textarea {
 }
 
 .heading-primary {
-  @apply text-3xl md:text-4xl lg:text-5xl font-serif text-primary-700;
+  @apply text-3xl md:text-4xl lg:text-5xl font-serif text-neutral-900 font-bold;
 }
 
 .heading-secondary {
-  @apply text-2xl md:text-3xl font-serif text-primary-700;
+  @apply text-2xl md:text-3xl font-display text-primary-700 font-medium;
 }
 
 .text-content {
-  @apply text-gray-700 leading-relaxed;
+  @apply text-neutral-700 leading-relaxed;
 }
 
 /* Adaptation responsive */
@@ -120,15 +145,60 @@ button, input, select, textarea {
 
 /* Animation de chargement */
 .loader {
-  border: 3px solid #f3f3f3;
-  border-radius: 50%;
-  border-top: 3px solid var(--primary);
-  width: 24px;
-  height: 24px;
-  animation: spin 1s linear infinite;
+  @apply w-8 h-8 rounded-full border-4 border-primary-200 border-t-primary-500 animate-spin;
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+/* Animation de shimmer */
+.shimmer {
+  @apply relative overflow-hidden;
+}
+
+.shimmer::before {
+  @apply absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12 animate-shimmer;
+  content: '';
+}
+
+/* Animation flottante */
+.float {
+  animation: floating 6s ease-in-out infinite;
+}
+
+@keyframes floating {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Effets de cartes */
+.card {
+  @apply bg-white rounded-lg overflow-hidden shadow-soft transition-all duration-300 hover:shadow-glow;
+}
+
+/* Effet de scintillement sur hover */
+.sparkle {
+  position: relative;
+  overflow: hidden;
+}
+
+.sparkle::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.8) 10%, transparent 10.5%) 50% 50% / 5em 5em, 
+              radial-gradient(circle, rgba(255,255,255,0.5) 10%, transparent 10.5%) 50% 50% / 2.5em 2.5em;
+  transform: rotate(45deg);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.sparkle:hover::after {
+  opacity: 0.3;
+  animation: sparkle-effect 2s linear forwards;
+}
+
+@keyframes sparkle-effect {
+  0% { transform: rotate(45deg) translateY(0); }
+  100% { transform: rotate(45deg) translateY(100%); }
 }
