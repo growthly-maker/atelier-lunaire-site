@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { FiMenu, FiX } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
+import { FiMenu, FiX, FiShoppingBag, FiSearch, FiUser } from 'react-icons/fi';
 import CartIcon from './CartIcon';
 
 export default function Header() {
@@ -10,7 +10,7 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const router = useRouter();
 
-  // Détectez si nous sommes sur la page Contact ou d'autres pages sans header image
+  // Détectez si nous sommes sur une page sans header image
   const isPageWithoutDarkHeader = [
     '/contact',
     '/panier',
@@ -43,81 +43,125 @@ export default function Header() {
     }
   }, [isPageWithoutDarkHeader]);
 
+  // Animation pour le header
+  const headerVariants = {
+    initial: { y: -100 },
+    animate: { y: 0, transition: { type: 'spring', stiffness: 100, damping: 20 } }
+  };
+
+  // Animation pour les liens de navigation
+  const navItemVariants = {
+    hover: { y: -3, transition: { duration: 0.3 } }
+  };
+
   return (
-    <header className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-beige-100 shadow-md py-2' : 'bg-transparent py-4'}`}>
+    <motion.header 
+      initial="initial"
+      animate="animate"
+      variants={headerVariants}
+      className={`fixed w-full z-50 transition-all duration-500 ${isScrolled ? 'bg-white/90 backdrop-blur-md shadow-soft py-3' : 'bg-transparent py-5'}`}
+    >
       <div className="container mx-auto px-4 flex justify-between items-center">
-        <Link href="/" className={`font-serif text-2xl ${isScrolled ? 'text-primary-700' : 'text-white'}`}>
-          Atelier Lunaire
+        <Link href="/" className={`font-serif text-3xl font-bold ${isScrolled ? 'text-primary-700' : 'text-white'} transition-colors duration-300`}>
+          <span className="text-secondary-500">L</span>unaire
         </Link>
 
-        <nav className="hidden md:flex space-x-6">
-          <Link href="/" className={`${isScrolled ? 'text-primary-600' : 'text-white'} hover:opacity-75 transition-opacity`}>
-            Accueil
-          </Link>
-          <Link href="/boutique" className={`${isScrolled ? 'text-primary-600' : 'text-white'} hover:opacity-75 transition-opacity`}>
-            Boutique
-          </Link>
-          <Link href="/a-propos" className={`${isScrolled ? 'text-primary-600' : 'text-white'} hover:opacity-75 transition-opacity`}>
-            Notre Histoire
-          </Link>
-          <Link href="/contact" className={`${isScrolled ? 'text-primary-600' : 'text-white'} hover:opacity-75 transition-opacity`}>
-            Contact
-          </Link>
+        {/* Navigation desktop */}
+        <nav className="hidden md:flex space-x-8">
+          {['Accueil', 'Boutique', 'Notre Histoire', 'Contact'].map((item, i) => {
+            const path = item === 'Accueil' ? '/' : `/${item.toLowerCase().replace(' ', '-')}`;
+            return (
+              <motion.div key={i} whileHover="hover" className="relative group">
+                <motion.div variants={navItemVariants}>
+                  <Link 
+                    href={path} 
+                    className={`${isScrolled ? 'text-neutral-700' : 'text-white'} hover:text-primary-500 py-2 transition-colors duration-300 font-medium`}
+                  >
+                    {item}
+                  </Link>
+                </motion.div>
+                <span className={`absolute bottom-0 left-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300 ${router.pathname === path ? 'w-full' : ''}`}></span>
+              </motion.div>
+            );
+          })}
         </nav>
 
-        <div className="flex items-center space-x-4">
-          <CartIcon className={isScrolled ? 'text-primary-700' : 'text-white'} />
+        {/* Icons navigation */}
+        <div className="flex items-center space-x-5">
+          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.97 }}>
+            <Link href="/recherche" className={`${isScrolled ? 'text-neutral-700' : 'text-white'} hover:text-primary-500 transition-colors`}>
+              <FiSearch size={20} />
+            </Link>
+          </motion.div>
+
+          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.97 }}>
+            <Link href="/compte" className={`${isScrolled ? 'text-neutral-700' : 'text-white'} hover:text-primary-500 transition-colors`}>
+              <FiUser size={20} />
+            </Link>
+          </motion.div>
+
+          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.97 }}>
+            <CartIcon className={isScrolled ? 'text-neutral-700 hover:text-primary-500' : 'text-white hover:text-primary-300'} />
+          </motion.div>
           
-          <button 
-            className={`md:hidden ${isScrolled ? 'text-primary-700' : 'text-white'}`}
+          {/* Bouton menu mobile */}
+          <motion.button 
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.97 }}
+            className={`md:hidden ${isScrolled ? 'text-neutral-700' : 'text-white'} hover:text-primary-500 focus:outline-none transition-colors`}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Menu"
           >
             {isMobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
-          </button>
+          </motion.button>
         </div>
       </div>
 
+      {/* Menu mobile */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div 
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-beige-100 absolute w-full"
+            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+            className="md:hidden bg-white shadow-lg absolute w-full overflow-hidden"
           >
-            <div className="container mx-auto px-4 py-4 flex flex-col space-y-4">
-              <Link 
-                href="/" 
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-primary-700 py-2 border-b border-primary-200"
+            <nav className="container mx-auto px-4 py-6 flex flex-col space-y-4">
+              {['Accueil', 'Boutique', 'Notre Histoire', 'Contact'].map((item, i) => {
+                const path = item === 'Accueil' ? '/' : `/${item.toLowerCase().replace(' ', '-')}`;
+                return (
+                  <motion.div 
+                    key={i}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.1 }}
+                  >
+                    <Link 
+                      href={path} 
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`block text-lg py-2 border-b border-neutral-100 text-neutral-800 ${router.pathname === path ? 'text-primary-500 font-medium' : ''}`}
+                    >
+                      {item}
+                    </Link>
+                  </motion.div>
+                );
+              })}
+
+              <motion.div 
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.4 }}
+                className="pt-4 flex space-x-4"
               >
-                Accueil
-              </Link>
-              <Link 
-                href="/boutique" 
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-primary-700 py-2 border-b border-primary-200"
-              >
-                Boutique
-              </Link>
-              <Link 
-                href="/a-propos" 
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-primary-700 py-2 border-b border-primary-200"
-              >
-                Notre Histoire
-              </Link>
-              <Link 
-                href="/contact" 
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-primary-700 py-2"
-              >
-                Contact
-              </Link>
-            </div>
+                <a href="#" className="text-neutral-500 hover:text-primary-500 transition-colors">Instagram</a>
+                <a href="#" className="text-neutral-500 hover:text-primary-500 transition-colors">Pinterest</a>
+                <a href="#" className="text-neutral-500 hover:text-primary-500 transition-colors">Facebook</a>
+              </motion.div>
+            </nav>
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </motion.header>
   );
 }
