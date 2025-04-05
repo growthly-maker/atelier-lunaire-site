@@ -1,22 +1,29 @@
 // pages/_app.js
 import { useEffect } from 'react';
-import { Cormorant_Garamond, Poppins } from 'next/font/google';
+import { Outfit, Playfair_Display, Sora } from 'next/font/google';
 import Head from 'next/head';
 import '../styles/globals.css';
 import { CartProvider } from '../context/CartContext';
 
-// Définition des polices
-const cormorant = Cormorant_Garamond({
+// Définition des polices modernes
+const outfit = Outfit({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700'],
-  variable: '--font-cormorant',
+  variable: '--font-outfit',
   display: 'swap',
 });
 
-const poppins = Poppins({
+const playfair = Playfair_Display({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600'],
-  variable: '--font-poppins',
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-playfair',
+  display: 'swap',
+});
+
+const sora = Sora({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-sora',
   display: 'swap',
 });
 
@@ -49,11 +56,11 @@ export default function App({ Component, pageProps }) {
     <CartProvider>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="theme-color" content="#967c58" />
-        <meta name="description" content="Atelier Lunaire - Bijoux bohème-chic artisanaux" />
+        <meta name="theme-color" content="#0ea5e9" />
+        <meta name="description" content="Atelier Lunaire - Bijoux contemporains et élégants" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className={`${cormorant.variable} ${poppins.variable}`}>
+      <div className={`${outfit.variable} ${playfair.variable} ${sora.variable} font-sans`}>
         <Component {...pageProps} />
       </div>
     </CartProvider>
