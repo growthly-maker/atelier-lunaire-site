@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { FiMenu, FiX } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 import CartIcon from './CartIcon';
@@ -7,19 +8,40 @@ import CartIcon from './CartIcon';
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const router = useRouter();
 
+  // Détectez si nous sommes sur la page Contact ou d'autres pages sans header image
+  const isPageWithoutDarkHeader = [
+    '/contact',
+    '/panier',
+    '/commande/success',
+    '/mentions-legales',
+    '/conditions-generales',
+    '/politique-confidentialite'
+  ].includes(router.pathname);
+
+  // Initialisation de l'état isScrolled en fonction de la page
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 10) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
+    // Si on est sur la page contact, on force le header en mode clair
+    if (isPageWithoutDarkHeader) {
+      setIsScrolled(true);
+    } else {
+      // Autrement, on dépend du scroll
+      const handleScroll = () => {
+        if (window.scrollY > 10) {
+          setIsScrolled(true);
+        } else {
+          setIsScrolled(false);
+        }
+      };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+      // Vérification initiale du scroll
+      handleScroll();
+
+      window.addEventListener('scroll', handleScroll);
+      return () => window.removeEventListener('scroll', handleScroll);
+    }
+  }, [isPageWithoutDarkHeader]);
 
   return (
     <header className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-beige-100 shadow-md py-2' : 'bg-transparent py-4'}`}>
