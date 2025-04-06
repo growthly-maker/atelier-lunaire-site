@@ -1,9 +1,13 @@
 import Stripe from 'stripe';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from './auth/[...nextauth]';
+import { connectToDatabase } from '../../lib/mongodb';
+import User from '../../models/User';
 
 // Initialiser Stripe avec votre clé secrète
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2023-10-16', // Utilisez la version la plus récente
-  maxNetworkRetries: 3, // Augmente la fiabilité pour les problèmes de réseau
+  apiVersion: '2023-10-16',
+  maxNetworkRetries: 3,
 });
 
 export default async function handler(req, res) {
@@ -12,7 +16,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { items } = req.body;
+    const { items, shippingDetails, email } = req.body;
 
     if (!items || items.length === 0) {
       return res.status(400).json({ error: 'Le panier est vide' });
@@ -33,8 +37,34 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Format d\'item invalide' });
     }
 
+    // Vérifier si l'utilisateur est connecté
+    const session = await getServerSession(req, res, authOptions);
+    
+    // Si l'utilisateur est connecté, récupérer ses informations
+    let userData = null;
+    
+    if (session) {
+      await connectToDatabase();
+      userData = await User.findById(session.user.id);
+    }
+
+    // Créer des metadata pour Stripe qui permettront de retrouver la commande
+    const metadata = {
+      origin: 'atelier-lunaire-ecommerce',
+      items: JSON.stringify(items.map(item => ({
+        id: item.price_data.product_data.id,
+        name: item.price_data.product_data.name,
+        quantity: item.quantity,
+      }))),
+      userEmail: session ? session.user.email : email,
+      userId: session ? session.user.id : null,
+    };
+
+    // Pré-remplir l'email du client si disponible
+    const customer_email = session ? session.user.email : email;
+
     // Crée une session de paiement Stripe
-    const session = await stripe.checkout.sessions.create({
+    const stripeSession = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: items,
       mode: 'payment',
@@ -85,20 +115,18 @@ export default async function handler(req, res) {
           },
         },
       ],
-      locale: 'fr', // Page de paiement en français
+      locale: 'fr',
       allow_promotion_codes: true,
-      metadata: {
-        origin: 'atelier-lunaire-ecommerce'
-      },
+      metadata,
       // Pour avoir plus d'informations sur le client
       billing_address_collection: 'required',
       phone_number_collection: {
         enabled: true,
       },
-      customer_email: req.body.email || undefined, // Pré-remplir l'email si disponible
+      customer_email: customer_email || undefined,
     });
 
-    res.status(200).json({ id: session.id });
+    res.status(200).json({ id: stripeSession.id });
   } catch (error) {
     console.error('Erreur Stripe:', error);
     res.status(500).json({ 
