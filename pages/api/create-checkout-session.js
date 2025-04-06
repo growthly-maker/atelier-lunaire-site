@@ -1,10 +1,7 @@
 import Stripe from 'stripe';
 
 // Initialiser Stripe avec votre clé secrète
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2023-10-16', // Utilisez la version la plus récente
-  maxNetworkRetries: 3, // Augmente la fiabilité pour les problèmes de réseau
-});
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -33,13 +30,16 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Format d\'item invalide' });
     }
 
+    // Définir l'URL de base pour les redirections
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+
     // Crée une session de paiement Stripe
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: items,
       mode: 'payment',
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/commande/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/panier`,
+      success_url: `${baseUrl}/commande/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${baseUrl}/panier`,
       shipping_address_collection: {
         allowed_countries: ['FR', 'BE', 'CH', 'LU', 'MC'],
       },
@@ -95,7 +95,6 @@ export default async function handler(req, res) {
       phone_number_collection: {
         enabled: true,
       },
-      customer_email: req.body.email || undefined, // Pré-remplir l'email si disponible
     });
 
     res.status(200).json({ id: session.id });

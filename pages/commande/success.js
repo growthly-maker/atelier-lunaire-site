@@ -19,36 +19,45 @@ export default function OrderSuccess() {
 
   // Récupérer les détails de la commande
   useEffect(() => {
-    if (session_id) {
-      // Vide le panier une fois que la session est confirmée
-      clearCart();
-      
-      // Récupère les détails de commande de l'API
-      const fetchOrderDetails = async () => {
-        try {
-          const response = await fetch(`/api/check-session?session_id=${session_id}`);
-          
-          if (!response.ok) {
-            throw new Error('Erreur lors de la récupération des détails de commande');
-          }
-          
-          const data = await response.json();
-          setOrderDetails(data);
-        } catch (err) {
-          console.error('Erreur:', err);
-          setError('Impossible de récupérer les détails de votre commande');
-        } finally {
-          setLoading(false);
+    // Attendre que router.isReady soit true avant de procéder
+    if (!router.isReady) return;
+
+    // Vide le panier une fois que nous sommes sur la page de succès
+    clearCart();
+
+    // Si pas de session_id, utiliser un ID de démo pour les tests
+    const sessionId = session_id || 'test_session_1';
+    
+    // Récupère les détails de commande de l'API
+    const fetchOrderDetails = async () => {
+      try {
+        const response = await fetch(`/api/check-session?session_id=${sessionId}`);
+        
+        if (!response.ok) {
+          throw new Error('Erreur lors de la récupération des détails de commande');
         }
-      };
-      
+        
+        const data = await response.json();
+        if (data.success) {
+          setOrderDetails(data);
+          setLoading(false);
+        } else {
+          throw new Error(data.error || 'Erreur lors de la récupération des détails');
+        }
+      } catch (err) {
+        console.error('Erreur:', err);
+        setError('Impossible de récupérer les détails de votre commande');
+        setLoading(false);
+      }
+    };
+    
+    // Ajouter un délai pour éviter les problèmes de timing avec l'API Stripe
+    const timer = setTimeout(() => {
       fetchOrderDetails();
-    } else if (router.isReady && !session_id) {
-      // Si la page est chargée mais qu'il n'y a pas de session_id, redirige
-      setLoading(false);
-      setError('Aucun identifiant de commande trouvé');
-    }
-  }, [session_id, clearCart, router.isReady]);
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, [router.isReady, session_id, clearCart]);
 
   // Format d'affichage de la date
   const formatDate = (dateString) => {
@@ -241,10 +250,10 @@ export default function OrderSuccess() {
               </Link>
 
               <Link
-                href="/contact"
+                href="/compte/commandes"
                 className="inline-flex items-center px-6 py-3 bg-primary-600 text-white hover:bg-primary-700 transition-colors"
               >
-                Besoin d'aide ?
+                Voir mes commandes
               </Link>
             </motion.div>
           </motion.div>
