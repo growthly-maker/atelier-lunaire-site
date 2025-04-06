@@ -1,1 +1,61 @@
-{"encoding":"base64","content":"Ly8gcGFnZXMvYXBpL2F1dGgvcmVnaXN0ZXIuanMKaW1wb3J0IHsgY29ubmVjdFRvRGF0YWJhc2UgfSBmcm9tICcuLi8uLi8uLi9saWIvbW9uZ29kYic7CmltcG9ydCBVc2VyIGZyb20gJy4uLy4uLy4uL21vZGVscy9Vc2VyJzsKaW1wb3J0IHsgeiB9IGZyb20gJ3pvZCc7CgovLyBTY2jDqW1hIGRlIHZhbGlkYXRpb24gYXZlYyBab2QKY29uc3QgcmVnaXN0ZXJTY2hlbWEgPSB6Lm9iamVjdCh7CiAgbmFtZTogei5zdHJpbmcoKS5taW4oMiwgJ0xlIG5vbSBkb2l0IGNvbnRlbmlyIGF1IG1vaW5zIDIgY2FyYWN0w6hyZXMnKSwKICBlbWFpbDogei5zdHJpbmcoKS5lbWFpbCgnRW1haWwgaW52YWxpZGUnKSwKICBwYXNzd29yZDogei5zdHJpbmcoKS5taW4oOCwgJ0xlIG1vdCBkZSBwYXNzZSBkb2l0IGNvbnRlbmlyIGF1IG1vaW5zIDggY2FyYWN0w6hyZXMnKSwKICBuZXdzbGV0dGVyU3Vic2NyaWJlZDogei5ib29sZWFuKCkub3B0aW9uYWwoKSwKfSk7CgpleHBvcnQgZGVmYXVsdCBhc3luYyBmdW5jdGlvbiBoYW5kbGVyKHJlcSwgcmVzKSB7CiAgLy8gVsOpcmlmaWVyIGxhIG3DqXRob2RlIEhUVFAKICBpZiAocmVxLm1ldGhvZCAhPT0gJ1BPU1QnKSB7CiAgICByZXR1cm4gcmVzLnN0YXR1cyg0MDUpLmpzb24oeyBtZXNzYWdlOiAnTcOpdGhvZGUgbm9uIGF1dG9yaXPDqWUnIH0pOwogIH0KCiAgdHJ5IHsKICAgIC8vIFZhbGlkZXIgbGVzIGRvbm7DqWVzIGVudHJhbnRlcwogICAgY29uc3QgdmFsaWRhdGlvblJlc3VsdCA9IHJlZ2lzdGVyU2NoZW1hLnNhZmVQYXJzZShyZXEuYm9keSk7CiAgICAKICAgIGlmICghdmFsaWRhdGlvblJlc3VsdC5zdWNjZXNzKSB7CiAgICAgIGNvbnN0IGVycm9yTWVzc2FnZSA9IHZhbGlkYXRpb25SZXN1bHQuZXJyb3IuZXJyb3JzWzBdPy5tZXNzYWdlIHx8ICdEb25uw6llcyBkXCdpbnNjcmlwdGlvbiBpbnZhbGlkZXMnOwogICAgICByZXR1cm4gcmVzLnN0YXR1cyg0MDApLmpzb24oeyBtZXNzYWdlOiBlcnJvck1lc3NhZ2UgfSk7CiAgICB9CiAgICAKICAgIGNvbnN0IHsgbmFtZSwgZW1haWwsIHBhc3N3b3JkLCBuZXdzbGV0dGVyU3Vic2NyaWJlZCB9ID0gdmFsaWRhdGlvblJlc3VsdC5kYXRhOwoKICAgIC8vIENvbm5leGlvbiDDoCBsYSBiYXNlIGRlIGRvbm7DqWVzCiAgICBhd2FpdCBjb25uZWN0VG9EYXRhYmFzZSgpOwoKICAgIC8vIFbDqXJpZmllciBzaSBsJ2VtYWlsIGV4aXN0ZSBkw6lqw6AKICAgIGNvbnN0IGV4aXN0aW5nVXNlciA9IGF3YWl0IFVzZXIuZmluZE9uZSh7IGVtYWlsIH0pOwogICAgCiAgICBpZiAoZXhpc3RpbmdVc2VyKSB7CiAgICAgIHJldHVybiByZXMuc3RhdHVzKDQwMCkuanNvbih7IG1lc3NhZ2U6ICdDZXQgZW1haWwgZXN0IGTDqWrDoCB1dGlsaXPDqScgfSk7CiAgICB9CgogICAgLy8gQ3LDqWVyIGwndXRpbGlzYXRldXIKICAgIGNvbnN0IHVzZXIgPSBhd2FpdCBVc2VyLmNyZWF0ZSh7CiAgICAgIG5hbWUsCiAgICAgIGVtYWlsLAogICAgICBwYXNzd29yZCwgLy8gTGUgbW9kw6hsZSBVc2VyIGhhc2ggYXV0b21hdGlxdWVtZW50IGxlIG1vdCBkZSBwYXNzZQogICAgICBuZXdzbGV0dGVyU3Vic2NyaWJlZDogISFuZXdzbGV0dGVyU3Vic2NyaWJlZCwKICAgIH0pOwoKICAgIC8vIFJlbnZveWVyIGwndXRpbGlzYXRldXIgc2FucyBsZSBtb3QgZGUgcGFzc2UKICAgIHJldHVybiByZXMuc3RhdHVzKDIwMSkuanNvbih7CiAgICAgIG1lc3NhZ2U6ICdDb21wdGUgY3LDqcOpIGF2ZWMgc3VjY8OocycsCiAgICAgIHVzZXI6IHsKICAgICAgICBpZDogdXNlci5faWQsCiAgICAgICAgbmFtZTogdXNlci5uYW1lLAogICAgICAgIGVtYWlsOiB1c2VyLmVtYWlsLAogICAgICB9LAogICAgfSk7CiAgfSBjYXRjaCAoZXJyb3IpIHsKICAgIGNvbnNvbGUuZXJyb3IoJ0VycmV1ciBkXCdpbnNjcmlwdGlvbjonLCBlcnJvcik7CiAgICByZXR1cm4gcmVzLnN0YXR1cyg1MDApLmpzb24oeyBtZXNzYWdlOiAnVW5lIGVycmV1ciBzXCdlc3QgcHJvZHVpdGUgbG9ycyBkZSBsXCdpbnNjcmlwdGlvbicgfSk7CiAgfQp9"}
+import { connectToDatabase } from '../../../lib/mongodb';
+import User from '../../../models/User';
+import { z } from 'zod';
+
+// Schéma de validation avec Zod
+const registerSchema = z.object({
+  name: z.string().min(2, 'Le nom doit contenir au moins 2 caractères'),
+  email: z.string().email('Email invalide'),
+  password: z.string().min(8, 'Le mot de passe doit contenir au moins 8 caractères'),
+  newsletterSubscribed: z.boolean().optional(),
+});
+
+export default async function handler(req, res) {
+  // Vérifier la méthode HTTP
+  if (req.method !== 'POST') {
+    return res.status(405).json({ message: 'Méthode non autorisée' });
+  }
+
+  try {
+    // Valider les données entrantes
+    const validationResult = registerSchema.safeParse(req.body);
+    
+    if (!validationResult.success) {
+      const errorMessage = validationResult.error.errors[0]?.message || 'Données d\'inscription invalides';
+      return res.status(400).json({ message: errorMessage });
+    }
+    
+    const { name, email, password, newsletterSubscribed } = validationResult.data;
+
+    // Connexion à la base de données
+    await connectToDatabase();
+
+    // Vérifier si l'email existe déjà
+    const existingUser = await User.findOne({ email });
+    
+    if (existingUser) {
+      return res.status(400).json({ message: 'Cet email est déjà utilisé' });
+    }
+
+    // Créer l'utilisateur
+    const user = await User.create({
+      name,
+      email,
+      password, // Le modèle User hash automatiquement le mot de passe
+      newsletterSubscribed: !!newsletterSubscribed,
+    });
+
+    // Renvoyer l'utilisateur sans le mot de passe
+    return res.status(201).json({
+      message: 'Compte créé avec succès',
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    console.error('Erreur d\'inscription:', error);
+    return res.status(500).json({ message: 'Une erreur s\'est produite lors de l\'inscription' });
+  }
+}
