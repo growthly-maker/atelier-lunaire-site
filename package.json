@@ -17,7 +17,15 @@
     "@headlessui/react": "^1.7.18",
     "@heroicons/react": "^2.1.1",
     "@stripe/stripe-js": "^2.4.0",
-    "stripe": "^14.10.0"
+    "stripe": "^14.10.0",
+    "next-auth": "^4.24.5",
+    "bcryptjs": "^2.4.3",
+    "mongoose": "^8.2.0",
+    "zod": "^3.22.4",
+    "nodemailer": "^6.9.10",
+    "@hookform/resolvers": "^3.3.4",
+    "react-hook-form": "^7.50.0",
+    "swr": "^2.2.4"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.16",
