@@ -26,7 +26,8 @@ export default function Header() {
     '/auth/inscription',
     '/compte',
     '/compte/commandes',
-    '/compte/parametres'
+    '/compte/parametres',
+    '/compte/profil'
   ].includes(router.pathname) || router.pathname.startsWith('/compte/commandes/');
 
   // Initialisation de l'état isScrolled en fonction de la page
@@ -116,7 +117,14 @@ export default function Header() {
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     onClick={() => setShowUserMenu(false)}
                   >
-                    Mon compte
+                    Tableau de bord
+                  </Link>
+                  <Link 
+                    href="/compte/profil" 
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    onClick={() => setShowUserMenu(false)}
+                  >
+                    Mon profil
                   </Link>
                   <Link 
                     href="/compte/commandes" 
@@ -209,7 +217,14 @@ export default function Header() {
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="text-primary-700 py-2 border-b border-primary-200"
                   >
-                    Mon compte
+                    Tableau de bord
+                  </Link>
+                  <Link 
+                    href="/compte/profil" 
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="text-primary-700 py-2 border-b border-primary-200"
+                  >
+                    Mon profil
                   </Link>
                   <Link 
                     href="/compte/commandes" 
