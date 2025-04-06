@@ -1,8 +1,8 @@
 import Head from 'next/head';
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
+import FixedAdminLayout from '../../components/admin/FixedLayout';
 import { FiBox, FiShoppingBag, FiUsers, FiCreditCard } from 'react-icons/fi';
-import AdminLayout from '../../components/admin/Layout';
 
 export default function AdminDashboard() {
   const { data: session } = useSession();
@@ -65,7 +65,7 @@ export default function AdminDashboard() {
   }, []);
 
   return (
-    <AdminLayout>
+    <FixedAdminLayout>
       <Head>
         <title>Tableau de bord | Administration Atelier Lunaire</title>
       </Head>
@@ -239,6 +239,6 @@ export default function AdminDashboard() {
           </div>
         </>
       )}
-    </AdminLayout>
+    </FixedAdminLayout>
   );
 }
