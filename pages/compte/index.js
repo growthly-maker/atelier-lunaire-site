@@ -71,14 +71,14 @@ export default function Account() {
           <h1 className="text-3xl font-semibold mb-6">Mon compte</h1>
           
           {/* Carte de bienvenue */}
-          <div className="bg-primary-50 p-6 rounded-lg shadow-sm mb-8 flex justify-between items-center">
-            <div>
+          <div className="bg-primary-50 p-6 rounded-lg shadow-sm mb-8 flex flex-col sm:flex-row justify-between sm:items-center">
+            <div className="mb-4 sm:mb-0">
               <h2 className="text-xl font-medium">Bonjour, {session.user.name}</h2>
               <p className="text-gray-600 mt-2">Bienvenue sur votre espace personnel. Vous pouvez gérer vos commandes, adresses et informations personnelles.</p>
             </div>
             <Link 
               href="/compte/profil" 
-              className="hidden sm:inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+              className="self-start sm:self-center inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
             >
               Voir mon profil
               <ArrowRightIcon className="h-4 w-4 ml-1" />
