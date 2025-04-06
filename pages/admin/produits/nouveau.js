@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import AdminLayout from '../../../components/admin/Layout';
+import FixedAdminLayout from '../../../components/admin/FixedLayout';
 import { FiPlus, FiX, FiImage, FiSave } from 'react-icons/fi';
 
 export default function NewProduct() {
@@ -176,7 +176,7 @@ export default function NewProduct() {
   };
 
   return (
-    <AdminLayout>
+    <FixedAdminLayout>
       <Head>
         <title>Nouveau produit | Administration Atelier Lunaire</title>
       </Head>
@@ -331,158 +331,6 @@ export default function NewProduct() {
           <p className="mt-1 text-xs text-gray-500">Une brève description du produit affichée dans les listes et aperçus.</p>
         </div>
 
-        {/* Description longue */}
-        <div className="mb-6">
-          <label htmlFor="longDescription" className="block text-sm font-medium text-gray-700 mb-1">
-            Description détaillée
-          </label>
-          <textarea
-            id="longDescription"
-            name="longDescription"
-            value={formData.longDescription}
-            onChange={handleChange}
-            rows="6"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
-          ></textarea>
-          <p className="mt-1 text-xs text-gray-500">Une description complète du produit, histoire, inspiration, etc.</p>
-        </div>
-
-        {/* Caractéristiques */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Caractéristiques et détails
-          </label>
-          {formData.details.map((detail, index) => (
-            <div key={index} className="flex mb-2">
-              <input
-                type="text"
-                value={detail}
-                onChange={(e) => handleDetailChange(index, e.target.value)}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
-                placeholder="Ex: Pierre de lune naturelle (8-10mm)"
-              />
-              <button
-                type="button"
-                onClick={() => removeDetail(index)}
-                className="ml-2 p-2 text-gray-500 hover:text-red-500"
-              >
-                <FiX className="h-5 w-5" />
-              </button>
-            </div>
-          ))}
-          <button
-            type="button"
-            onClick={addDetail}
-            className="mt-2 flex items-center text-sm text-primary-600 hover:text-primary-700"
-          >
-            <FiPlus className="mr-1" /> Ajouter une caractéristique
-          </button>
-        </div>
-
-        {/* Conseils d'entretien */}
-        <div className="mb-6">
-          <label htmlFor="care" className="block text-sm font-medium text-gray-700 mb-1">
-            Conseils d'entretien
-          </label>
-          <textarea
-            id="care"
-            name="care"
-            value={formData.care}
-            onChange={handleChange}
-            rows="3"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
-            placeholder="Ex: Évitez le contact avec l'eau, les parfums et produits cosmétiques..."
-          ></textarea>
-        </div>
-
-        {/* Options du produit */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Options du produit (ex: taille, longueur, etc.)
-          </label>
-          
-          {/* Options existantes */}
-          {formData.options.length > 0 && (
-            <div className="mb-4 border rounded-md border-gray-200 p-4">
-              <h3 className="text-sm font-medium text-gray-700 mb-2">Options ajoutées:</h3>
-              {formData.options.map((option, index) => (
-                <div key={index} className="mb-3 pl-3 border-l-2 border-primary-200">
-                  <div className="flex justify-between items-center">
-                    <h4 className="text-sm font-medium">{option.name}</h4>
-                    <button
-                      type="button"
-                      onClick={() => removeOption(index)}
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      <FiX className="h-4 w-4" />
-                    </button>
-                  </div>
-                  <p className="text-sm text-gray-600">
-                    Choix: {option.choices.join(', ')}
-                  </p>
-                </div>
-              ))}
-            </div>
-          )}
-          
-          {/* Ajout d'une nouvelle option */}
-          <div className="border rounded-md border-gray-200 p-4">
-            <div className="mb-3">
-              <label htmlFor="optionName" className="block text-sm font-medium text-gray-700 mb-1">
-                Nom de l'option
-              </label>
-              <input
-                type="text"
-                id="optionName"
-                value={newOption.name}
-                onChange={handleOptionNameChange}
-                placeholder="Ex: Longueur de chaîne"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
-              />
-            </div>
-            
-            <div className="mb-3">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Choix disponibles
-              </label>
-              {newOption.choices.map((choice, index) => (
-                <div key={index} className="flex mb-2">
-                  <input
-                    type="text"
-                    value={choice}
-                    onChange={(e) => handleOptionChoiceChange(index, e.target.value)}
-                    placeholder="Ex: 40-45cm (standard)"
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => removeOptionChoice(index)}
-                    className="ml-2 p-2 text-gray-500 hover:text-red-500"
-                  >
-                    <FiX className="h-5 w-5" />
-                  </button>
-                </div>
-              ))}
-              <button
-                type="button"
-                onClick={addOptionChoice}
-                className="mt-1 flex items-center text-sm text-primary-600 hover:text-primary-700"
-              >
-                <FiPlus className="mr-1" /> Ajouter un choix
-              </button>
-            </div>
-            
-            <button
-              type="button"
-              onClick={addOption}
-              disabled={!newOption.name || newOption.choices.some(c => !c)}
-              className="px-3 py-1 bg-primary-50 text-primary-700 rounded-md hover:bg-primary-100 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Ajouter cette option
-            </button>
-          </div>
-        </div>
-
         {/* Images */}
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -558,6 +406,6 @@ export default function NewProduct() {
           </button>
         </div>
       </form>
-    </AdminLayout>
+    </FixedAdminLayout>
   );
 }
