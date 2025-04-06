@@ -32,14 +32,25 @@ export default function Cart() {
         if (item.selectedOptions && item.selectedOptions['Longueur de chaîne'] === '45-50cm (+5€)') {
           itemPrice += 5;
         }
+
+        // Générer une description valide non vide
+        let description = "";
+        if (item.selectedOptions && Object.keys(item.selectedOptions).length > 0) {
+          description = Object.entries(item.selectedOptions).map(([k, v]) => `${k}: ${v}`).join(', ');
+        }
+        
+        // S'assurer que la description n'est jamais vide
+        if (!description || description.trim() === '') {
+          description = "Produit Atelier Lunaire";
+        }
         
         return {
           price_data: {
             currency: 'eur',
             product_data: {
               name: item.name,
-              description: Object.entries(item.selectedOptions || {}).map(([k, v]) => `${k}: ${v}`).join(', '),
-              images: item.images ? [item.images[0]] : [],
+              description: description,
+              images: item.images && item.images.length > 0 ? [item.images[0]] : [],
             },
             unit_amount: itemPrice * 100, // Prix en centimes
           },
@@ -59,7 +70,8 @@ export default function Cart() {
       });
 
       if (!response.ok) {
-        throw new Error('Erreur lors de la création de la session de paiement');
+        const errorData = await response.json();
+        throw new Error(errorData.details || 'Erreur lors de la création de la session de paiement');
       }
 
       const session = await response.json();
