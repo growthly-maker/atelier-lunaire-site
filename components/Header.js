@@ -1,265 +1,245 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { FiMenu, FiX, FiUser, FiChevronDown } from 'react-icons/fi';
-import { motion, AnimatePresence } from 'framer-motion';
+import { FiShoppingBag, FiSearch, FiMenu, FiX, FiUser, FiHeart } from 'react-icons/fi';
 import { useSession, signOut } from 'next-auth/react';
-import CartIcon from './CartIcon';
+import { useCart } from '../context/CartContext';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Header() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [showUserMenu, setShowUserMenu] = useState(false);
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
+  const { cartCount } = useCart();
   const router = useRouter();
-  const userMenuRef = useRef(null);
-
-  // Détectez si nous sommes sur la page Contact ou d'autres pages sans header image
-  const isPageWithoutDarkHeader = [
-    '/contact',
-    '/panier',
-    '/commande/success',
-    '/mentions-legales',
-    '/conditions-generales',
-    '/politique-confidentialite',
-    '/auth/connexion',
-    '/auth/inscription',
-    '/compte',
-    '/compte/commandes',
-    '/compte/parametres',
-    '/compte/profil'
-  ].includes(router.pathname) || router.pathname.startsWith('/compte/commandes/');
-
-  // Initialisation de l'état isScrolled en fonction de la page
+  
+  const [isOpen, setIsOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  
+  // Gestionnaire de défilement pour l'effet du header
   useEffect(() => {
-    // Si on est sur la page contact, on force le header en mode clair
-    if (isPageWithoutDarkHeader) {
-      setIsScrolled(true);
-    } else {
-      // Autrement, on dépend du scroll
-      const handleScroll = () => {
-        if (window.scrollY > 10) {
-          setIsScrolled(true);
-        } else {
-          setIsScrolled(false);
-        }
-      };
-
-      // Vérification initiale du scroll
-      handleScroll();
-
-      window.addEventListener('scroll', handleScroll);
-      return () => window.removeEventListener('scroll', handleScroll);
-    }
-  }, [isPageWithoutDarkHeader]);
-
-  // Gestion du clic en dehors du menu utilisateur pour le fermer
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
-        setShowUserMenu(false);
-      }
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
     };
-
-    document.addEventListener('mousedown', handleClickOutside);
+    
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Vérifier la position initiale
+    
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
-
-  // Gérer la déconnexion
-  const handleSignOut = async (e) => {
-    e.preventDefault();
+  
+  // Fonction pour basculer le menu mobile
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
+  
+  // Fonction pour basculer le menu utilisateur
+  const toggleUserMenu = () => {
+    setIsUserMenuOpen(!isUserMenuOpen);
+  };
+  
+  // Fonction pour se déconnecter
+  const handleSignOut = async () => {
     await signOut({ redirect: false });
-    setShowUserMenu(false);
     router.push('/');
   };
+  
+  // Navigation principale
+  const navigation = [
+    { name: 'Accueil', href: '/' },
+    { name: 'Boutique', href: '/boutique' },
+    { name: 'À propos', href: '/a-propos' },
+    { name: 'Contact', href: '/contact' },
+  ];
 
   return (
-    <header className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-beige-100 shadow-md py-2' : 'bg-transparent py-4'}`}>
+    <header 
+      className={`fixed top-0 w-full z-30 transition-all duration-300 ${isScrolled ? 'bg-white shadow-sm py-3' : 'bg-transparent py-5'}`}
+    >
       <div className="container mx-auto px-4 flex justify-between items-center">
-        <Link href="/" className={`font-serif text-2xl ${isScrolled ? 'text-primary-700' : 'text-white'}`}>
+        {/* Logo */}
+        <Link href="/" className="font-serif text-2xl text-primary-800">
           Atelier Lunaire
         </Link>
 
-        <nav className="hidden md:flex space-x-6">
-          <Link href="/" className={`${isScrolled ? 'text-primary-600' : 'text-white'} hover:opacity-75 transition-opacity`}>
-            Accueil
-          </Link>
-          <Link href="/boutique" className={`${isScrolled ? 'text-primary-600' : 'text-white'} hover:opacity-75 transition-opacity`}>
-            Boutique
-          </Link>
-          <Link href="/a-propos" className={`${isScrolled ? 'text-primary-600' : 'text-white'} hover:opacity-75 transition-opacity`}>
-            Notre Histoire
-          </Link>
-          <Link href="/contact" className={`${isScrolled ? 'text-primary-600' : 'text-white'} hover:opacity-75 transition-opacity`}>
-            Contact
-          </Link>
+        {/* Navigation desktop */}
+        <nav className="hidden md:flex space-x-8">
+          {navigation.map((item) => (
+            <Link 
+              key={item.name} 
+              href={item.href}
+              className={`text-sm ${router.pathname === item.href ? 'text-primary-700 font-medium' : 'text-gray-700 hover:text-primary-600'}`}
+            >
+              {item.name}
+            </Link>
+          ))}
         </nav>
 
+        {/* Icônes de droite */}
         <div className="flex items-center space-x-4">
-          {/* Menu utilisateur connecté ou lien de connexion */}
-          {status === 'authenticated' ? (
-            <div className="relative" ref={userMenuRef}>
-              <button 
-                onClick={() => setShowUserMenu(!showUserMenu)}
-                className={`flex items-center ${isScrolled ? 'text-primary-600' : 'text-white'} hover:opacity-75 transition-opacity`}
-              >
-                <FiUser className="mr-1" />
-                <span className="hidden sm:inline">{session.user.name.split(' ')[0]}</span>
-                <FiChevronDown className="ml-1" size={14} />
-              </button>
-              
-              {showUserMenu && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
-                  <Link 
-                    href="/compte" 
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    onClick={() => setShowUserMenu(false)}
-                  >
-                    Tableau de bord
-                  </Link>
-                  <Link 
-                    href="/compte/profil" 
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    onClick={() => setShowUserMenu(false)}
-                  >
-                    Mon profil
-                  </Link>
-                  <Link 
-                    href="/compte/commandes" 
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    onClick={() => setShowUserMenu(false)}
-                  >
-                    Mes commandes
-                  </Link>
-                  <Link 
-                    href="/compte/parametres" 
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    onClick={() => setShowUserMenu(false)}
-                  >
-                    Paramètres
-                  </Link>
-                  <hr className="my-1" />
-                  <button 
-                    onClick={handleSignOut}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Déconnexion
-                  </button>
-                </div>
-              )}
-            </div>
-          ) : (
-            <Link 
-              href="/auth/connexion" 
-              className={`flex items-center ${isScrolled ? 'text-primary-600' : 'text-white'} hover:opacity-75 transition-opacity`}
+          {/* Icon de recherche */}
+          <Link href="/recherche" className="text-gray-700 hover:text-primary-600">
+            <FiSearch size={20} />
+          </Link>
+          
+          {/* Icône du panier */}
+          <Link href="/panier" className="relative text-gray-700 hover:text-primary-600">
+            <FiShoppingBag size={20} />
+            {cartCount > 0 && (
+              <span className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-primary-600 flex items-center justify-center text-white text-xs">
+                {cartCount}
+              </span>
+            )}
+          </Link>
+          
+          {/* Icône utilisateur avec menu */}
+          <div className="relative">
+            <button 
+              onClick={toggleUserMenu}
+              className="text-gray-700 hover:text-primary-600 flex items-center"
             >
-              <FiUser className="mr-1" />
-              <span className="hidden sm:inline">Connexion</span>
-            </Link>
-          )}
+              <FiUser size={20} />
+            </button>
+            
+            {/* Menu utilisateur */}
+            <AnimatePresence>
+              {isUserMenuOpen && (
+                <motion.div 
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50"
+                >
+                  {session ? (
+                    <>
+                      <div className="px-4 py-2 border-b border-gray-100">
+                        <p className="text-sm font-medium text-gray-900">{session.user.name}</p>
+                        <p className="text-xs text-gray-500">{session.user.email}</p>
+                      </div>
+                      <Link 
+                        href="/mon-compte"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        onClick={() => setIsUserMenuOpen(false)}
+                      >
+                        Mon compte
+                      </Link>
+                      <Link 
+                        href="/mon-compte/commandes"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        onClick={() => setIsUserMenuOpen(false)}
+                      >
+                        Mes commandes
+                      </Link>
+                      <Link 
+                        href="/mon-compte/favoris"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        onClick={() => setIsUserMenuOpen(false)}
+                      >
+                        Mes favoris
+                      </Link>
+                      {session.user.isAdmin && (
+                        <Link 
+                          href="/admin"
+                          className="block px-4 py-2 text-sm text-primary-700 hover:bg-gray-100"
+                          onClick={() => setIsUserMenuOpen(false)}
+                        >
+                          Administration
+                        </Link>
+                      )}
+                      <button 
+                        onClick={() => {
+                          setIsUserMenuOpen(false);
+                          handleSignOut();
+                        }}
+                        className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 border-t border-gray-100"
+                      >
+                        Déconnexion
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <Link 
+                        href="/auth/connexion"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        onClick={() => setIsUserMenuOpen(false)}
+                      >
+                        Connexion
+                      </Link>
+                      <Link 
+                        href="/auth/inscription"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        onClick={() => setIsUserMenuOpen(false)}
+                      >
+                        Inscription
+                      </Link>
+                    </>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
           
-          <CartIcon className={isScrolled ? 'text-primary-700' : 'text-white'} />
-          
+          {/* Bouton du menu mobile */}
           <button 
-            className={`md:hidden ${isScrolled ? 'text-primary-700' : 'text-white'}`}
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            onClick={toggleMenu}
+            className="md:hidden text-gray-700 hover:text-primary-600"
           >
-            {isMobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+            {isOpen ? <FiX size={24} /> : <FiMenu size={24} />}
           </button>
         </div>
       </div>
 
+      {/* Menu mobile */}
       <AnimatePresence>
-        {isMobileMenuOpen && (
+        {isOpen && (
           <motion.div 
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-beige-100 absolute w-full"
+            transition={{ duration: 0.3 }}
+            className="md:hidden bg-white shadow-md overflow-hidden"
           >
-            <div className="container mx-auto px-4 py-4 flex flex-col space-y-4">
-              <Link 
-                href="/" 
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-primary-700 py-2 border-b border-primary-200"
-              >
-                Accueil
-              </Link>
-              <Link 
-                href="/boutique" 
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-primary-700 py-2 border-b border-primary-200"
-              >
-                Boutique
-              </Link>
-              <Link 
-                href="/a-propos" 
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-primary-700 py-2 border-b border-primary-200"
-              >
-                Notre Histoire
-              </Link>
-              <Link 
-                href="/contact" 
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-primary-700 py-2 border-b border-primary-200"
-              >
-                Contact
-              </Link>
-              
-              {/* Ajouter les liens de compte utilisateur dans le menu mobile */}
-              {status === 'authenticated' ? (
-                <>
+            <nav className="px-4 py-3 space-y-3">
+              {navigation.map((item) => (
+                <Link 
+                  key={item.name} 
+                  href={item.href}
+                  className={`block py-2 ${router.pathname === item.href ? 'text-primary-700 font-medium' : 'text-gray-700'}`}
+                  onClick={() => setIsOpen(false)}
+                >
+                  {item.name}
+                </Link>
+              ))}
+              {session && (
+                <div className="pt-3 border-t border-gray-200">
                   <Link 
-                    href="/compte" 
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="text-primary-700 py-2 border-b border-primary-200"
+                    href="/mon-compte"
+                    className="block py-2 text-gray-700"
+                    onClick={() => setIsOpen(false)}
                   >
-                    Tableau de bord
+                    Mon compte
                   </Link>
                   <Link 
-                    href="/compte/profil" 
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="text-primary-700 py-2 border-b border-primary-200"
-                  >
-                    Mon profil
-                  </Link>
-                  <Link 
-                    href="/compte/commandes" 
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="text-primary-700 py-2 border-b border-primary-200"
+                    href="/mon-compte/commandes"
+                    className="block py-2 text-gray-700"
+                    onClick={() => setIsOpen(false)}
                   >
                     Mes commandes
                   </Link>
-                  <Link 
-                    href="/compte/parametres" 
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="text-primary-700 py-2 border-b border-primary-200"
-                  >
-                    Paramètres
-                  </Link>
-                  <button 
-                    onClick={(e) => {
-                      handleSignOut(e);
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className="text-primary-700 py-2 text-left"
-                  >
-                    Déconnexion
-                  </button>
-                </>
-              ) : (
-                <Link 
-                  href="/auth/connexion" 
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-primary-700 py-2"
-                >
-                  Connexion
-                </Link>
+                  {session.user.isAdmin && (
+                    <Link 
+                      href="/admin"
+                      className="block py-2 text-primary-700 font-medium"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Administration
+                    </Link>
+                  )}
+                </div>
               )}
-            </div>
+            </nav>
           </motion.div>
         )}
       </AnimatePresence>
