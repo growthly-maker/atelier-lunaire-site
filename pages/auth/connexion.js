@@ -51,6 +51,14 @@ export default function Login() {
       
       if (result.error) {
         setError(result.error);
+
+        // Vérifier si l'erreur est liée à la vérification de l'email
+        if (result.error.includes('vérifier votre adresse email')) {
+          // Ajouter un message spécifique pour la vérification
+          setError(
+            "Votre adresse email n'a pas été vérifiée. Veuillez vérifier votre boîte de réception ou "
+          );
+        }
       } else {
         // Récupère le paramètre callbackUrl ou redirige vers la page compte
         const callbackUrl = router.query.callbackUrl || '/compte';
@@ -80,7 +88,17 @@ export default function Login() {
           {error && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-sm flex items-start">
               <FiAlertCircle className="flex-shrink-0 mt-0.5 mr-2" />
-              <span>{error}</span>
+              <div>
+                <span>{error}</span>
+                {error.includes('adresse email') && (
+                  <Link 
+                    href="/resend-verification" 
+                    className="block mt-1 text-primary-600 hover:text-primary-700 font-medium"
+                  >
+                    Renvoyer l'email de vérification
+                  </Link>
+                )}
+              </div>
             </div>
           )}
           
@@ -148,6 +166,14 @@ export default function Login() {
                 Créer un compte
               </Link>
             </p>
+            <div className="mt-2">
+              <Link 
+                href="/resend-verification"
+                className="text-sm text-primary-600 hover:text-primary-700"
+              >
+                Besoin de vérifier votre email ?
+              </Link>
+            </div>
           </div>
         </div>
       </main>
