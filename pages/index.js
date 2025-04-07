@@ -9,6 +9,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Newsletter from '../components/Newsletter';
 import FeaturedProducts from '../components/FeaturedProducts';
+import BlogPreview from '../components/home/BlogPreview';
 
 export default function Home() {
   const [isHovered, setIsHovered] = useState(false);
@@ -100,6 +101,9 @@ export default function Home() {
 
         {/* Section Produits Phares */}
         <FeaturedProducts />
+
+        {/* Section Blog */}
+        <BlogPreview />
 
         {/* Section Artisanat */}
         <section className="py-20 px-4 md:px-8 flex flex-col md:flex-row items-center bg-primary-50">
