@@ -231,3 +231,70 @@ export default function EditArticle() {
       </AdminLayout>
     );
   }
+
+  return (
+    <AdminLayout title="Modifier l'article">
+      <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+        <div className="flex justify-between items-center mb-6">
+          <div className="flex items-center">
+            <button 
+              onClick={() => router.back()}
+              className="mr-4 text-gray-600 hover:text-gray-900"
+            >
+              <FiArrowLeft size={20} />
+            </button>
+            <h1 className="text-2xl font-semibold text-gray-800">Modifier l'article</h1>
+          </div>
+          
+          <div className="flex space-x-3">
+            <button
+              type="button"
+              onClick={handleDelete}
+              className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 flex items-center"
+              disabled={submitting}
+            >
+              <FiTrash2 className="mr-2" /> Supprimer
+            </button>
+            
+            <button
+              type="button"
+              onClick={() => setPreviewMode(!previewMode)}
+              className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 flex items-center"
+            >
+              <FiEye className="mr-2" /> {previewMode ? 'Éditer' : 'Aperçu'}
+            </button>
+            
+            <button
+              type="button"
+              onClick={handleSubmit}
+              disabled={submitting}
+              className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 flex items-center disabled:bg-indigo-300"
+            >
+              <FiSave className="mr-2" /> Enregistrer
+            </button>
+          </div>
+        </div>
+
+        {error && <Alert type="error" message={error} className="mb-4" />}
+        {success && <Alert type="success" message={success} className="mb-4" />}
+        
+        {loading ? (
+          <div className="flex justify-center items-center h-64">
+            <Spinner size="lg" />
+          </div>
+        ) : previewMode ? (
+          <div className="bg-gray-50 p-6 rounded-lg">
+            <h2 className="text-3xl font-bold mb-4">{formData.title || 'Titre de l\'article'}</h2>
+            {formData.coverImage && (
+              <img 
+                src={formData.coverImage} 
+                alt={formData.title} 
+                className="w-full h-64 object-cover rounded-lg mb-6" 
+              />
+            )}
+            <div className="text-lg text-gray-600 mb-6 italic">{formData.summary || 'Résumé de l\'article'}</div>
+            <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: formData.content || '<p>Contenu de l\'article...</p>' }} />
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit}>
+            <div className="grid grid-cols-1 gap-6">
