@@ -23,6 +23,11 @@ export const authOptions = {
           throw new Error('Aucun utilisateur trouvé avec cet email');
         }
         
+        // Vérifier si l'email a été vérifié
+        if (!user.isVerified) {
+          throw new Error('Veuillez vérifier votre adresse email avant de vous connecter');
+        }
+        
         // Vérifier si le mot de passe correspond
         const isMatch = await bcrypt.compare(credentials.password, user.password);
         
