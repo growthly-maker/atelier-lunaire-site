@@ -298,3 +298,226 @@ export default function EditArticle() {
         ) : (
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 gap-6">
+              {/* Titre et slug */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+                    Titre *
+                  </label>
+                  <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleChange}
+                    required
+                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="slug" className="block text-sm font-medium text-gray-700 mb-1">
+                    Slug *
+                  </label>
+                  <div className="flex">
+                    <input
+                      type="text"
+                      id="slug"
+                      name="slug"
+                      value={formData.slug}
+                      onChange={handleChange}
+                      required
+                      className="flex-1 rounded-l-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleRegenerateSlug}
+                      className="bg-gray-200 px-3 py-2 rounded-r-md hover:bg-gray-300 text-sm"
+                    >
+                      Régénérer
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Résumé */}
+              <div>
+                <label htmlFor="summary" className="block text-sm font-medium text-gray-700 mb-1">
+                  Résumé *
+                </label>
+                <textarea
+                  id="summary"
+                  name="summary"
+                  value={formData.summary}
+                  onChange={handleChange}
+                  required
+                  rows={3}
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                />
+              </div>
+              
+              {/* Image de couverture */}
+              <div>
+                <label htmlFor="coverImage" className="block text-sm font-medium text-gray-700 mb-1">
+                  Image de couverture (URL) *
+                </label>
+                <input
+                  type="url"
+                  id="coverImage"
+                  name="coverImage"
+                  value={formData.coverImage}
+                  onChange={handleChange}
+                  required
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                />
+                {formData.coverImage && (
+                  <div className="mt-2">
+                    <img 
+                      src={formData.coverImage} 
+                      alt="Aperçu de l'image" 
+                      className="h-32 w-auto object-cover rounded-md" 
+                    />
+                  </div>
+                )}
+              </div>
+              
+              {/* Catégorie et Tags */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
+                    Catégorie *
+                  </label>
+                  <select
+                    id="category"
+                    name="category"
+                    value={formData.category}
+                    onChange={handleChange}
+                    required
+                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  >
+                    <option value="actualites">Actualités</option>
+                    <option value="conseils">Conseils</option>
+                    <option value="inspiration">Inspiration</option>
+                    <option value="evenements">Événements</option>
+                    <option value="artisanat">Artisanat</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label htmlFor="tags" className="block text-sm font-medium text-gray-700 mb-1">
+                    Tags (séparés par des virgules)
+                  </label>
+                  <input
+                    type="text"
+                    id="tags"
+                    name="tags"
+                    value={formData.tags}
+                    onChange={handleChange}
+                    placeholder="bijoux, été, argent, ..."
+                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  />
+                </div>
+              </div>
+              
+              {/* Options */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="isFeatured"
+                    name="isFeatured"
+                    checked={formData.isFeatured}
+                    onChange={handleChange}
+                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                  />
+                  <label htmlFor="isFeatured" className="ml-2 block text-sm text-gray-900">
+                    Mettre en avant sur la page d'accueil
+                  </label>
+                </div>
+                
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="isPublished"
+                    name="isPublished"
+                    checked={formData.isPublished}
+                    onChange={handleChange}
+                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                  />
+                  <label htmlFor="isPublished" className="ml-2 block text-sm text-gray-900">
+                    Publier immédiatement (sinon en brouillon)
+                  </label>
+                </div>
+              </div>
+              
+              {/* Produits associés */}
+              <div>
+                <label htmlFor="relatedProducts" className="block text-sm font-medium text-gray-700 mb-1">
+                  Produits associés
+                </label>
+                <select
+                  id="relatedProducts"
+                  name="relatedProducts"
+                  multiple
+                  value={formData.relatedProducts}
+                  onChange={handleChange}
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  size={4}
+                >
+                  {products.map((product) => (
+                    <option key={product._id} value={product._id}>
+                      {product.name}
+                    </option>
+                  ))}
+                </select>
+                <p className="mt-1 text-sm text-gray-500">Maintenez Ctrl ou Cmd pour sélectionner plusieurs produits</p>
+              </div>
+              
+              {/* Contenu */}
+              <div>
+                <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">
+                  Contenu *
+                </label>
+                <div className="rounded-md border border-gray-300">
+                  <ReactQuill 
+                    theme="snow"
+                    value={formData.content}
+                    onChange={handleContentChange}
+                    className="h-96"
+                    modules={{
+                      toolbar: [
+                        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                        ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+                        [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
+                        ['link', 'image'],
+                        ['clean']
+                      ],
+                    }}
+                  />
+                </div>
+              </div>
+              
+              <div className="flex justify-end mt-6">
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700 flex items-center disabled:bg-indigo-300"
+                >
+                  {submitting ? (
+                    <>
+                      <Spinner size="sm" className="mr-2" /> Mise à jour en cours...
+                    </>
+                  ) : (
+                    <>
+                      <FiSave className="mr-2" /> Enregistrer les modifications
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </form>
+        )}
+      </div>
+    </AdminLayout>
+  );
+}
