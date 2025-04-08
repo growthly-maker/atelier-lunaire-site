@@ -10,7 +10,8 @@ export const authOptions = {
       name: 'Credentials',
       credentials: {
         email: { label: "Email", type: "email" },
-        password: { label: "Mot de passe", type: "password" }
+        password: { label: "Mot de passe", type: "password" },
+        bypassVerification: { label: "Ignorer la vérification", type: "checkbox" }
       },
       async authorize(credentials) {
         await connectToDatabase();
@@ -24,7 +25,10 @@ export const authOptions = {
         }
         
         // Vérifier si l'email a été vérifié
-        if (!user.isVerified) {
+        // Note: skip la vérification si l'environnement est en développement ou si l'option est activée
+        const skipVerification = process.env.NODE_ENV === 'development' || process.env.SKIP_EMAIL_VERIFICATION === 'true';
+        
+        if (!user.isVerified && !skipVerification) {
           throw new Error('Veuillez vérifier votre adresse email avant de vous connecter');
         }
         
@@ -41,6 +45,7 @@ export const authOptions = {
           name: user.name,
           email: user.email,
           isAdmin: user.isAdmin,
+          isVerified: user.isVerified,
         };
       }
     })
@@ -50,12 +55,14 @@ export const authOptions = {
       if (user) {
         token.id = user.id;
         token.isAdmin = user.isAdmin;
+        token.isVerified = user.isVerified;
       }
       return token;
     },
     async session({ session, token }) {
       session.user.id = token.id;
       session.user.isAdmin = token.isAdmin;
+      session.user.isVerified = token.isVerified;
       return session;
     }
   },
